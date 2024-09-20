@@ -1,0 +1,8 @@
+
+mkdir nodesqlserver
+cd nodesqlserver
+npm init -y
+
+npm install mssql express dotenv
+
+npm install sequelize tedious

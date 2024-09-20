@@ -1,0 +1,7 @@
+### Acessando via GET
+GET http://localhost:3000
+### Acessando via GET
+GET http://localhost:3000/clientes
+### Acessando via GET
+GET http://localhost:3000/consultores
+###
