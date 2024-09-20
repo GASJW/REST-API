@@ -1,31 +1,28 @@
-const { Sequelize, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database"); // Supondo que a conexão do Sequelize esteja neste arquivo
 
-// Conexão com o banco de dados SQL Server
-const sequelize = new Sequelize("database_name", "username", "password", {
-  host: "10.0.2.15", // Coloque o IP ou hostname do seu SQL Server
-  dialect: "mssql", // O dialeto que vamos usar para SQL Server
-});
-
-// Definindo o model do Vinculo
-const Vinculo = sequelize.define("Vinculo", {
-  userName: {
-    type: DataTypes.STRING,
-    allowNull: false,
+const Vinculo = sequelize.define(
+  "Vinculo",
+  {
+    idVinculo: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
+    descVinculo: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
   },
-  userChannel: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  userDate: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.NOW,
-  },
-});
-
-// Sincronizando o model com o banco de dados
-(async () => {
-  await sequelize.sync();
-})();
+  {
+    tableName: "tblVinculo", // Nome da tabela no banco de dados
+    timestamps: false, // Desativa os campos de timestamp automáticos (createdAt, updatedAt)
+  }
+);
 
 module.exports = Vinculo;
