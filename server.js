@@ -5,7 +5,8 @@ const clienteRoutes = require("./routes/clientes.js"); // Importa as rotas
 const consultorRoutes = require("./routes/consultores.js"); // Importa as rotas
 const contratoRoutes = require("./routes/contratos.js"); // Importa as rotas
 const tipoContratosRoutes = require("./routes/tipoContratos.js"); // Importa as rotas
-const vinculoRoutes = require("./routes/consultores.js"); // Importa as rotas
+const statusContratosRoutes = require("./routes/statusContratos.js"); // Importa as rotas
+const vinculoRoutes = require("./routes/vinculos.js"); // Importa as rotas
 const fazendaRoutes = require("./routes/fazendas.js"); // Importa as rotas
 
 const app = express();
@@ -18,6 +19,7 @@ app.use("/clientes", clienteRoutes);
 app.use("/consultores", consultorRoutes);
 app.use("/contratos", contratoRoutes);
 app.use("/tipoContratos", tipoContratosRoutes);
+app.use("/statusContratos", statusContratosRoutes);
 app.use("/vinculos", vinculoRoutes);
 app.use("/fazendas", fazendaRoutes);
 

@@ -41,6 +41,10 @@ const ContratoLog = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    idTipoContrato: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     DateStamp: {
       type: DataTypes.DATE,
       allowNull: true,

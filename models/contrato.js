@@ -22,6 +22,10 @@ const Contrato = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
     CreatedDate: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -36,6 +40,10 @@ const Contrato = sequelize.define(
       allowNull: true,
     },
     idTipoContrato: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    idStatusContrato: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },

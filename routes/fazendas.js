@@ -32,14 +32,13 @@ router.get("/:id", async (req, res) => {
 
 // Rota POST para "/fazendas" - Adiciona uma nova fazenda
 router.post("/", async (req, res) => {
-  const { descFazenda, CNPJ, hasFazenda, idVinculo, idCliente } = req.body;
+  const { descFazenda, CNPJ, idVinculo, idCliente } = req.body;
   const DateNow = Sequelize.fn("GETDATE");
 
   try {
     const newFazenda = await Fazenda.create({
       descFazenda,
       CNPJ,
-      hasFazenda,
       idVinculo,
       idCliente,
       CreatedDate: DateNow,
@@ -49,7 +48,6 @@ router.post("/", async (req, res) => {
       idFazenda: newFazenda.idFazenda,
       descFazenda: newFazenda.descFazenda,
       CNPJ: newFazenda.CNPJ,
-      hasFazenda: newFazenda.hasFazenda,
       CreatedDate: DateNow,
       ModifiedDate: DateNow,
       idVinculo: newFazenda.idVinculo,
@@ -68,7 +66,7 @@ router.post("/", async (req, res) => {
 
 // Rota PATCH para "/fazendas/:id" - Atualiza uma fazenda pelo ID
 router.patch("/:id", async (req, res) => {
-  const { descFazenda, CNPJ, hasFazenda, idVinculo, idCliente } = req.body;
+  const { descFazenda, CNPJ, idVinculo, idCliente } = req.body;
   const DateNow = Sequelize.fn("GETDATE");
   const transaction = await sequelize.transaction();
 
@@ -80,7 +78,6 @@ router.patch("/:id", async (req, res) => {
 
     fazenda.descFazenda = descFazenda;
     fazenda.CNPJ = CNPJ;
-    fazenda.hasFazenda = hasFazenda;
     fazenda.idVinculo = idVinculo;
     fazenda.idCliente = idCliente;
     fazenda.ModifiedDate = DateNow;
@@ -91,7 +88,6 @@ router.patch("/:id", async (req, res) => {
       idFazenda: fazenda.idFazenda,
       descFazenda: fazenda.descFazenda,
       CNPJ: fazenda.CNPJ,
-      hasFazenda: fazenda.hasFazenda,
       CreatedDate: new Date(fazenda.CreatedDate)
         .toISOString()
         .slice(0, 19)
@@ -106,15 +102,14 @@ router.patch("/:id", async (req, res) => {
 
     await sequelize.query(
       `
-      INSERT INTO tblFazendaLog (idFazenda, descFazenda, CNPJ, hasFazenda, CreatedDate, ModifiedDate, idVinculo, idCliente, DateStamp, ActionStamp, UserStamp)
-      VALUES (:idFazenda, :descFazenda, :CNPJ, :hasFazenda, :CreatedDate, GETDATE(), :idVinculo, :idCliente, GETDATE(), :ActionStamp, :UserStamp)
+      INSERT INTO tblFazendaLog (idFazenda, descFazenda, CNPJ, CreatedDate, ModifiedDate, idVinculo, idCliente, DateStamp, ActionStamp, UserStamp)
+      VALUES (:idFazenda, :descFazenda, :CNPJ, :CreatedDate, GETDATE(), :idVinculo, :idCliente, GETDATE(), :ActionStamp, :UserStamp)
     `,
       {
         replacements: {
           idFazenda: fazendaLogData.idFazenda,
           descFazenda: fazendaLogData.descFazenda,
           CNPJ: fazendaLogData.CNPJ,
-          hasFazenda: fazendaLogData.hasFazenda,
           CreatedDate: fazendaLogData.CreatedDate,
           idVinculo: fazendaLogData.idVinculo,
           idCliente: fazendaLogData.idCliente,
@@ -148,7 +143,6 @@ router.delete("/:id", async (req, res) => {
       idFazenda: fazenda.idFazenda,
       descFazenda: fazenda.descFazenda,
       CNPJ: fazenda.CNPJ,
-      hasFazenda: fazenda.hasFazenda,
       CreatedDate: new Date(fazenda.CreatedDate)
         .toISOString()
         .slice(0, 19)
@@ -163,15 +157,14 @@ router.delete("/:id", async (req, res) => {
 
     await sequelize.query(
       `
-      INSERT INTO tblFazendaLog (idFazenda, descFazenda, CNPJ, hasFazenda, CreatedDate, ModifiedDate, idVinculo, idCliente, DateStamp, ActionStamp, UserStamp)
-      VALUES (:idFazenda, :descFazenda, :CNPJ, :hasFazenda, :CreatedDate, GETDATE(), :idVinculo, :idCliente, GETDATE(), :ActionStamp, :UserStamp)
+      INSERT INTO tblFazendaLog (idFazenda, descFazenda, CNPJ, CreatedDate, ModifiedDate, idVinculo, idCliente, DateStamp, ActionStamp, UserStamp)
+      VALUES (:idFazenda, :descFazenda, :CNPJ, :CreatedDate, GETDATE(), :idVinculo, :idCliente, GETDATE(), :ActionStamp, :UserStamp)
     `,
       {
         replacements: {
           idFazenda: fazendaLogData.idFazenda,
           descFazenda: fazendaLogData.descFazenda,
           CNPJ: fazendaLogData.CNPJ,
-          hasFazenda: fazendaLogData.hasFazenda,
           CreatedDate: fazendaLogData.CreatedDate,
           idVinculo: fazendaLogData.idVinculo,
           idCliente: fazendaLogData.idCliente,

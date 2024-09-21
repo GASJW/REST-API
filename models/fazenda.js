@@ -18,10 +18,6 @@ const Fazenda = sequelize.define(
       type: DataTypes.STRING(14),
       allowNull: false,
     },
-    hasFazenda: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
     CreatedDate: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -21,10 +21,6 @@ const FazendaLog = sequelize.define(
       type: DataTypes.STRING(14),
       allowNull: false,
     },
-    hasFazenda: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-    },
     CreatedDate: {
       type: DataTypes.DATE,
       allowNull: true,
