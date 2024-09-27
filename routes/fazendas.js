@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
       idVinculo: newFazenda.idVinculo,
       idCliente: newFazenda.idCliente,
       DateStamp: DateNow,
-      ActionStamp: "C",
+      ActionStamp: "I",
       UserStamp: req.user ? req.user.id : null,
     });
 

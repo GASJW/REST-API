@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
       ModifiedDate: DateNow,
       idConsultor: newCliente.idConsultor,
       DateStamp: DateNow,
-      ActionStamp: "C", // 'C' para Create
+      ActionStamp: "I", // 'I' para Insert
       //UserStamp: req.user.id, // Supondo que você tenha o ID do usuário na requisição
     });
 

@@ -6,3 +6,11 @@ npm init -y
 npm install mssql express dotenv
 
 npm install sequelize tedious
+
+
+npx create-react-app <nome>
+
+atualizado:
+npm create vite@lastest
+npm i
+npm run dev

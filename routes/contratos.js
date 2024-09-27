@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
       idTipoContrato: newContrato.idTipoContrato,
       idStatusContrato: newContrato.idStatusContrato,
       DateStamp: DateNow,
-      ActionStamp: "C",
+      ActionStamp: "I",
       UserStamp: req.user ? req.user.id : null,
     });
 
