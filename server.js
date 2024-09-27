@@ -32,7 +32,7 @@ sequelize
   })
   .then(() => {
     app.listen(port, () => {
-      console.log(`Servidor rodando em http://localhost:${port}/clientes`);
+      console.log(`Servidor rodando em http://localhost:${port}/`);
     });
   })
   .catch((err) => {
