@@ -43,8 +43,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Rota PUT para "/consultores/:id" - Atualiza um consultor pelo ID
-router.put("/:id", async (req, res) => {
+// Rota patch para "/consultores/:id" - Atualiza um consultor pelo ID
+router.patch("/:id", async (req, res) => {
   const { idConsultor, nmConsultor, isActive } = req.body;
 
   try {

@@ -45,8 +45,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Rota PUT para "/statusContratos/:id" - Atualiza um Status do Contrato pelo ID
-router.put("/:id", async (req, res) => {
+// Rota patch para "/statusContratos/:id" - Atualiza um Status do Contrato pelo ID
+router.patch("/:id", async (req, res) => {
   const { descStatusContrato, isActive } = req.body;
 
   try {

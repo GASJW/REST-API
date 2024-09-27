@@ -43,8 +43,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Rota PUT para "/vinculos/:id" - Atualiza um vínculo pelo ID
-router.put("/:id", async (req, res) => {
+// Rota patch para "/vinculos/:id" - Atualiza um vínculo pelo ID
+router.patch("/:id", async (req, res) => {
   const { descVinculo, isActive } = req.body;
 
   try {

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { Sequelize } = require("sequelize"); // Importa o Sequelize
-const moment = require("moment");
 const Cliente = require("../models/cliente"); // Importa o modelo criado
 const ClienteLog = require("../models/clienteLog");
 const sequelize = require("../config/database");
@@ -119,8 +118,6 @@ router.patch("/:id", async (req, res) => {
       ActionStamp: "U",
       UserStamp: req.user ? req.user.id : null, // Supondo que você tenha o ID do usuário no request
     };
-
-    console.log(cliente.CreatedDate, clienteLogData.CreatedDate);
 
     await sequelize.query(
       `
