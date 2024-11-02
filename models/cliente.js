@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database"); // Supondo que a conexão do Sequelize esteja neste arquivo
-const { Sequelize } = require("sequelize"); // Importa o Sequelize
+const sequelize = require("../config/database");
+const { Sequelize } = require("sequelize");
+const Consultor = require("./consultor"); // Supondo que você tenha um modelo Consultor
 
 const Cliente = sequelize.define(
   "Cliente",
@@ -21,11 +22,11 @@ const Cliente = sequelize.define(
     },
     CNPJ: {
       type: DataTypes.STRING(14),
-      allowNull: false,
+      allowNull: true,
     },
     CPF: {
       type: DataTypes.STRING(11),
-      allowNull: false,
+      allowNull: true,
     },
     hasCPS: {
       type: DataTypes.BOOLEAN,
@@ -46,13 +47,15 @@ const Cliente = sequelize.define(
     },
     idConsultor: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
-    tableName: "tblCliente", // Nome da tabela no banco de dados
-    timestamps: false, // Desativa os campos de timestamp automáticos (createdAt, updatedAt)
+    tableName: "tblCliente",
+    timestamps: false,
   }
 );
+
+Cliente.belongsTo(Consultor, { foreignKey: "idConsultor" });
 
 module.exports = Cliente;

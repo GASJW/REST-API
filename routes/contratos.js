@@ -1,15 +1,72 @@
 const express = require("express");
 const router = express.Router();
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
 const Contrato = require("../models/contrato");
 const ContratoLog = require("../models/contratoLog");
 const Cliente = require("../models/cliente");
+const TipoContrato = require("../models/tipoContrato");
+const StatusContrato = require("../models/statusContrato");
 const sequelize = require("../config/database");
 
-// Rota GET para "/contratos" - Obtém todos os contratos
+// Rota GET para "/contratos" - Obtém todos os contratos com filtros e ordenação
 router.get("/", async (req, res) => {
+  const {
+    numContrato,
+    descCliente,
+    descTipoContrato,
+    descStatusContrato,
+    isActive,
+    sortField,
+    sortOrder,
+  } = req.query;
+  const order = sortField ? [[sortField, sortOrder || "ASC"]] : [];
+
+  const where = {
+    ...(numContrato && { numContrato: { [Op.like]: `%${numContrato}%` } }),
+    ...(isActive && { isActive: { [Op.like]: `%${isActive}%` } }),
+  };
+
+  const include = [
+    {
+      model: Cliente,
+      attributes: ["idCliente", "descCliente"],
+      where: descCliente
+        ? { descCliente: { [Op.like]: `%${descCliente}%` } }
+        : {},
+    },
+    {
+      model: TipoContrato,
+      attributes: ["idTipoContrato", "descTipoContrato"],
+      where: descTipoContrato
+        ? { descTipoContrato: { [Op.like]: `%${descTipoContrato}%` } }
+        : {},
+    },
+    {
+      model: StatusContrato,
+      attributes: ["idStatusContrato", "descStatusContrato"],
+      where: descStatusContrato
+        ? { descStatusContrato: { [Op.like]: `%${descStatusContrato}%` } }
+        : {},
+    },
+  ];
+
   try {
-    const contratos = await Contrato.findAll();
+    const contratos = await Contrato.findAll({
+      attributes: [
+        "idContrato",
+        "numContrato",
+        "dtPrazoAssinatura",
+        "dtVencimento",
+        "isActive",
+        "idCliente",
+        "idTipoContrato",
+        "idStatusContrato",
+      ],
+      include,
+      where,
+      order,
+    });
+    console.log("Contratos retornados pela API:", contratos);
     res.json(contratos);
   } catch (error) {
     console.error("Erro ao buscar contratos:", error);
@@ -20,10 +77,36 @@ router.get("/", async (req, res) => {
 // Rota GET para "/contratos/:id" - Obtém um contrato pelo ID
 router.get("/:id", async (req, res) => {
   try {
-    const contrato = await Contrato.findByPk(req.params.id);
+    const contrato = await Contrato.findByPk(req.params.id, {
+      attributes: [
+        "idContrato",
+        "numContrato",
+        "dtPrazoAssinatura",
+        "dtVencimento",
+        "idCliente",
+        "isActive",
+        "idTipoContrato",
+        "idStatusContrato",
+      ],
+      include: [
+        {
+          model: Cliente,
+          attributes: ["idCliente", "descCliente"],
+        },
+        {
+          model: TipoContrato,
+          attributes: ["idTipoContrato", "descTipoContrato"],
+        },
+        {
+          model: StatusContrato,
+          attributes: ["idStatusContrato", "descStatusContrato"],
+        },
+      ],
+    });
     if (!contrato) {
       return res.status(404).json({ message: "Contrato não encontrado" });
     }
+    console.log("Contrato retornado pela API:", contrato); // Adicione este log
     res.json(contrato);
   } catch (error) {
     console.error("Erro ao buscar contrato:", error);
@@ -61,9 +144,9 @@ router.post("/", async (req, res) => {
       numContrato: newContrato.numContrato,
       dtPrazoAssinatura: newContrato.dtPrazoAssinatura,
       dtVencimento: newContrato.dtVencimento,
-      isActive: newContrato.isActive,
       CreatedDate: DateNow,
       ModifiedDate: DateNow,
+      isActive: newContrato.isActive,
       idCliente: newContrato.idCliente,
       idTipoContrato: newContrato.idTipoContrato,
       idStatusContrato: newContrato.idStatusContrato,
@@ -161,6 +244,7 @@ router.patch("/:id", async (req, res) => {
     await transaction.commit();
     res.json(contrato);
   } catch (error) {
+    await transaction.rollback();
     console.error("Erro ao atualizar contrato:", error);
     res.status(400).json({ message: "Erro ao atualizar contrato" });
   }
@@ -187,6 +271,7 @@ router.delete("/:id", async (req, res) => {
         .slice(0, 19)
         .replace("T", " "),
       ModifiedDate: Sequelize.fn("GETDATE"),
+      isActive: contrato.isActive,
       idCliente: contrato.idCliente,
       idTipoContrato: contrato.idTipoContrato,
       idStatusContrato: contrato.idStatusContrato,
@@ -197,8 +282,8 @@ router.delete("/:id", async (req, res) => {
 
     await sequelize.query(
       `
-      INSERT INTO tblContratoLog (idContrato, numContrato, dtPrazoAssinatura, dtVencimento, CreatedDate, ModifiedDate, idCliente, idTipoContrato, idStatusContrato, DateStamp, ActionStamp, UserStamp)
-      VALUES (:idContrato, :numContrato, :dtPrazoAssinatura, :dtVencimento, :CreatedDate, GETDATE(), :idCliente, :idTipoContrato, :idStatusContrato, GETDATE(), :ActionStamp, :UserStamp)
+      INSERT INTO tblContratoLog (idContrato, numContrato, dtPrazoAssinatura, dtVencimento, CreatedDate, ModifiedDate, isActive, idCliente, idTipoContrato, idStatusContrato, DateStamp, ActionStamp, UserStamp)
+      VALUES (:idContrato, :numContrato, :dtPrazoAssinatura, :dtVencimento, :CreatedDate, GETDATE(), :isActive, :idCliente, :idTipoContrato, :idStatusContrato, GETDATE(), :ActionStamp, :UserStamp)
     `,
       {
         replacements: {
@@ -207,6 +292,7 @@ router.delete("/:id", async (req, res) => {
           dtPrazoAssinatura: contratoLogData.dtPrazoAssinatura,
           dtVencimento: contratoLogData.dtVencimento,
           CreatedDate: contratoLogData.CreatedDate,
+          isActive: contratoLogData.isActive,
           idCliente: contratoLogData.idCliente,
           idTipoContrato: contratoLogData.idTipoContrato,
           idStatusContrato: contrato.idStatusContrato,
@@ -223,6 +309,7 @@ router.delete("/:id", async (req, res) => {
 
     res.json({ message: "Contrato deletado com sucesso" });
   } catch (error) {
+    await transaction.rollback();
     console.error("Erro ao deletar contrato:", error);
     res.status(500).json({ message: "Erro ao deletar contrato" });
   }

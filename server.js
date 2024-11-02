@@ -1,20 +1,21 @@
 require("dotenv").config();
 const express = require("express");
-const sequelize = require("./config/database.js"); // Importa a conexão do Sequelize
-const clienteRoutes = require("./routes/clientes.js"); // Importa as rotas
-const consultorRoutes = require("./routes/consultores.js"); // Importa as rotas
-const contratoRoutes = require("./routes/contratos.js"); // Importa as rotas
-const tipoContratosRoutes = require("./routes/tipoContratos.js"); // Importa as rotas
-const statusContratosRoutes = require("./routes/statusContratos.js"); // Importa as rotas
-const vinculoRoutes = require("./routes/vinculos.js"); // Importa as rotas
-const fazendaRoutes = require("./routes/fazendas.js"); // Importa as rotas
+const cors = require("cors");
+const sequelize = require("./config/database.js");
+const clienteRoutes = require("./routes/clientes.js");
+const consultorRoutes = require("./routes/consultores.js");
+const contratoRoutes = require("./routes/contratos.js");
+const tipoContratosRoutes = require("./routes/tipoContratos.js");
+const statusContratosRoutes = require("./routes/statusContratos.js");
+const vinculoRoutes = require("./routes/vinculos.js");
+const fazendaRoutes = require("./routes/fazendas.js");
 
 const app = express();
-const port = 3000;
+const port = 3030;
 
+app.use(cors());
 app.use(express.json());
 
-// Usa as rotas criadas
 app.use("/clientes", clienteRoutes);
 app.use("/consultores", consultorRoutes);
 app.use("/contratos", contratoRoutes);
@@ -23,12 +24,11 @@ app.use("/statusContratos", statusContratosRoutes);
 app.use("/vinculos", vinculoRoutes);
 app.use("/fazendas", fazendaRoutes);
 
-// Sincroniza o Sequelize com o banco de dados e inicia o servidor
 sequelize
-  .authenticate() // Verifica se a conexão foi bem-sucedida
+  .authenticate()
   .then(() => {
     console.log("Conexão com o banco de dados estabelecida com sucesso.");
-    return sequelize.sync(); // Sincroniza os modelos
+    return sequelize.sync();
   })
   .then(() => {
     app.listen(port, () => {

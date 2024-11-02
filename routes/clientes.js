@@ -1,32 +1,97 @@
 const express = require("express");
 const router = express.Router();
-const { Sequelize } = require("sequelize"); // Importa o Sequelize
-const Cliente = require("../models/cliente"); // Importa o modelo criado
+const { Sequelize, Op } = require("sequelize");
+const Cliente = require("../models/cliente");
+const Consultor = require("../models/consultor");
 const ClienteLog = require("../models/clienteLog");
 const sequelize = require("../config/database");
 
-// Rota GET para "/clientes" - Obtém todos os clientes
+// Rota GET para "/clientes" - Obtém todos os clientes com filtros e ordenação
 router.get("/", async (req, res) => {
+  const {
+    descCliente,
+    CNPJ,
+    CPF,
+    nmConsultor,
+    isActive,
+    sortField,
+    sortOrder,
+  } = req.query;
+  const order = sortField ? [[sortField, sortOrder || "ASC"]] : [];
+
+  const where = {
+    ...(descCliente && { descCliente: { [Op.like]: `%${descCliente}%` } }),
+    ...(CNPJ && { CNPJ: { [Op.like]: `%${CNPJ}%` } }),
+    ...(CPF && { CPF: { [Op.like]: `%${CPF}%` } }),
+    ...(isActive && { isActive: { [Op.like]: `%${isActive}%` } }),
+  };
+
+  const include = [
+    {
+      model: Consultor,
+      attributes: ["idConsultor", "nmConsultor"],
+      where: nmConsultor
+        ? { nmConsultor: { [Op.like]: `%${nmConsultor}%` } }
+        : {},
+    },
+  ];
+
   try {
-    const clientes = await Cliente.findAll();
+    const clientes = await Cliente.findAll({
+      attributes: [
+        "idCliente",
+        "descCliente",
+        "isCNPJ",
+        "CNPJ",
+        "CPF",
+        "hasCPS",
+        "isActive",
+        "idConsultor",
+      ],
+      include,
+      where,
+      order,
+    });
+    console.log("Clientes retornados pela API:", clientes);
     res.json(clientes);
   } catch (error) {
     console.error("Erro ao buscar clientes:", error);
-    res.status(500).json({ message: "Erro ao buscar clientes" });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar clientes", error: error.message });
   }
 });
 
 // Rota GET para "/clientes/:id" - Obtém um cliente pelo ID
 router.get("/:id", async (req, res) => {
   try {
-    const cliente = await Cliente.findByPk(req.params.id);
+    const cliente = await Cliente.findByPk(req.params.id, {
+      attributes: [
+        "idCliente",
+        "descCliente",
+        "isCNPJ",
+        "CNPJ",
+        "CPF",
+        "hasCPS",
+        "idConsultor",
+      ],
+      include: [
+        {
+          model: Consultor,
+          attributes: ["idConsultor", "nome"],
+        },
+      ],
+    });
     if (!cliente) {
       return res.status(404).json({ message: "Cliente não encontrado" });
     }
+    console.log("Cliente retornado pela API:", cliente); // Adicione este log
     res.json(cliente);
   } catch (error) {
     console.error("Erro ao buscar cliente:", error);
-    res.status(500).json({ message: "Erro ao buscar cliente" });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar cliente", error: error.message });
   }
 });
 

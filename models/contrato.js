@@ -1,5 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Cliente = require("./cliente");
+const TipoContrato = require("./tipoContrato");
+const StatusContrato = require("./statusContrato");
 
 const Contrato = sequelize.define(
   "Contrato",
@@ -53,5 +56,9 @@ const Contrato = sequelize.define(
     timestamps: false,
   }
 );
+
+Contrato.belongsTo(Cliente, { foreignKey: "idCliente" });
+Contrato.belongsTo(TipoContrato, { foreignKey: "idTipoContrato" });
+Contrato.belongsTo(StatusContrato, { foreignKey: "idStatusContrato" });
 
 module.exports = Contrato;
